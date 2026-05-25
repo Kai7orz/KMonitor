@@ -1,4 +1,26 @@
 services:
+  nginx:
+    image: nginx
+    volumes:
+      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf
+    ports:
+      - 80:80
+      - 443:443
+
+  next:
+    build:
+      context: .
+      dockerfile: docker/next/Dockerfile
+    container_name: next
+    ports:
+      - 3001:3000
+    tty: true
+    volumes:
+      - type: bind
+        source: ./front-next
+        target: /usr/src/app
+    command: ["npm","run","dev"]
+
   nuxt:
     build:
       context: .
@@ -13,8 +35,11 @@ services:
       - ./front:/app:cached
       - nuxt_node_modules:/app/node_modules
     command: sh -c '(npm ci || npm install) && npm run dev'
+    # host.docker.internal がホストのアドレスに解決
+    # nuxt コンテナからホストに設置した API とかにアクセスする必要があった？（記憶ないもしかしたら EC2 関連でリクエスト来れないと通せないパターンがあったのかもしれない）
     extra_hosts:
       - "host.docker.internal:host-gateway"
+
 
   go:
     container_name: go
