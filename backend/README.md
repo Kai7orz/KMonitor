@@ -1,3 +1,7 @@
+## testify mock について
+
+
+
 ##
 docker-compose -f docker-compose.yml -f docker-compose.prod.yml up --build -d
 
@@ -463,6 +467,8 @@ svc := service.NewUserService(&UserCacheRepo{cache})
 ```
 ※はじめはdbaseディレクトリ(=repository)　として実装を進める
 ※service が外部サービスとDB　をインターフェースで扱うように定める
+※domain 導入で改修作業中
+
 ### Go で firebase idToken を検証する
 
 - service に auth（外部サービス）用のインターフェス定義
