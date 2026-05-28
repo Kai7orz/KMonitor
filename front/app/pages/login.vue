@@ -33,7 +33,7 @@ const signInUser = async () => {
     await minLoadingPromise;
     const TOKEN = auth.idToken;
     await new Promise(resolve => setTimeout(resolve, 100));
-    userData.value = await $fetch("/api/login",
+    userData.value = await $fetch("/api/login", // http:go:8080/login から変更
       {
         method: "POST",
         headers: {

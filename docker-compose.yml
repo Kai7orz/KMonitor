@@ -19,7 +19,8 @@ services:
       - type: bind
         source: ./front-next
         target: /usr/src/app
-    command: ["npm","run","dev"]
+      - next_node_modules:/usr/src/app/node_modules
+    command: sh -c 'rm -rf .next && npm run dev'
 
   nuxt:
     build:
@@ -34,12 +35,11 @@ services:
     volumes:
       - ./front:/app:cached
       - nuxt_node_modules:/app/node_modules
-    command: sh -c '(npm ci || npm install) && npm run dev'
+    command: sh -c 'npm install && npm run dev'
     # host.docker.internal がホストのアドレスに解決
     # nuxt コンテナからホストに設置した API とかにアクセスする必要があった？（記憶ないもしかしたら EC2 関連でリクエスト来れないと通せないパターンがあったのかもしれない）
     extra_hosts:
       - "host.docker.internal:host-gateway"
-
 
   go:
     container_name: go
@@ -57,6 +57,8 @@ services:
     volumes:
       - ./backend/golang/src:/go/src
       - ./backend/golang/src/internal/images:/go/src/internal/images
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
 
   go-test:
     container_name: go-test
@@ -71,7 +73,6 @@ services:
     command: sh -c "cd /go/src && go test ./... -v"
     depends_on:
       - dev_db
-
 
   dev_db:
     container_name: dev_db
@@ -137,6 +138,7 @@ services:
 
 volumes:
   nuxt_node_modules:
+  next_node_modules:
   mysql_dev_volume:
     name: mysql_dev_volume
   mysql_test_volume:

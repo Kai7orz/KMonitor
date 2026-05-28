@@ -60,19 +60,22 @@ func (h *UserHandler) LoginUser(ctx *gin.Context) {
 	// ヘッダー取り出し
 	authz := ctx.GetHeader("Authorization")
 	if !strings.HasPrefix(authz, "Bearer ") {
+		log.Println("login error: missing bearer token, Authorization:", authz)
 		ctx.JSON(http.StatusUnauthorized, gin.H{"error": "missing bearer token"})
 		return
 	}
 	token := strings.TrimPrefix(authz, "Bearer ")
+	log.Println("login attempt: token prefix =", token[:min(len(token), 20)])
 
 	userRaw, err := h.svc.LoginUser(ctx.Request.Context(), token)
 	if err != nil {
 		switch {
 		case errors.Is(err, apperrs.ErrVerifyUser):
-			log.Println("failed to verify user : ", err)
+			log.Println("login error: firebase token verification failed:", err)
 			ctx.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": "invalid user request"})
 			return
 		default:
+			log.Println("login error: internal error:", err)
 			ctx.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": "internal server error"})
 			return
 		}

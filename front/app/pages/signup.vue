@@ -14,7 +14,7 @@ const signUpUser = async () => {
   try {
     await signUp(email.value, password.value);
     const TOKEN = auth.idToken;
-    await $fetch("/api/signup",
+    await $fetch("/api/users",
       {
         method: "POST",
         headers: {
