@@ -38,10 +38,10 @@ func main() {
 		log.Fatal("migrate up failed")
 	}
 	//seeding
-	// err = dbase.SeedingDB(db)
-	// if err != nil {
-	// 	log.Fatal("seeding error")
-	// }
+	err = dbase.SeedingDB(db)
+	if err != nil {
+		log.Fatal("seeding error")
+	}
 	// dbase のコンストラクタ => userRepo が db とのやり取りのインターフェースのイメージ
 	err = godotenv.Load(".env")
 	if err != nil {
